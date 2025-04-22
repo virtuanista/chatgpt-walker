@@ -1,6 +1,6 @@
 # ChatGPT Walker
 
-Transforma las conversaciones de ChatGPT en archivos Markdown estructurados por fecha y con un formato claro y legible, optimizados para su importación en [Obsidian](https://obsidian.md/).
+Pasar las conversaciones de ChatGPT en archivos Markdown estructurados por fecha y con un formato claro y legible, optimizados para su importación en [Obsidian](https://obsidian.md/).
 
 ## Instrucciones de uso
 
