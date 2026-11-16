@@ -2,7 +2,15 @@
 
 Pasar las conversaciones de ChatGPT en archivos Markdown estructurados por fecha y con un formato claro y legible, optimizados para su importación en [Obsidian](https://obsidian.md/).
 
-## Instrucciones de uso
+[![Usar en el navegador](https://img.shields.io/badge/▶_Usar_en_el_navegador-sin_instalar_nada-10a37f?style=for-the-badge)](https://virtuanista.github.io/chatgpt-walker/)
+
+## Versión web (la forma más fácil)
+
+Entra en **[virtuanista.github.io/chatgpt-walker](https://virtuanista.github.io/chatgpt-walker/)**, suelta el `.zip` que te envía OpenAI (no hace falta descomprimirlo) y descarga otro `.zip` con todos los Markdown, organizados igual que con el script. **Todo ocurre en tu navegador**: tus conversaciones no se suben a ningún servidor. El código está en [`web/index.html`](web/index.html).
+
+![Versión web](docs/web.jpg)
+
+## Instrucciones de uso (script de Python)
 
 ### 1. Exportar tus conversaciones de ChatGPT
 
