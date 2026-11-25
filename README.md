@@ -37,11 +37,15 @@ chatgpt-walker/
 ├── walker.py (debes correr este script)
 ├── README.md
 ├── LICENSE
-├── export_conversations.PNG
-├── download_conversations.PNG
+├── web/ (versión para el navegador)
+└── docs/
 ```
 
 ### 3. Ejecutar el script
+
+```bash
+python walker.py
+```
 
 El script creará:
 
@@ -71,9 +75,8 @@ Para importar las conversaciones a tu bóveda de Obsidian:
 
 Los archivos ya están en formato Markdown compatible con Obsidian, por lo que:
 
-- Los enlaces internos funcionarán automáticamente
-- Puedes usar la vista gráfica para ver conexiones
-- El formato de código y las imágenes se mostrarán correctamente
+- El formato de código se mostrará correctamente
+- Solo se exporta el texto de los mensajes: las imágenes no se incluyen
 - Puedes usar todos los plugins y funcionalidades de Obsidian para hallar insights
 
 ## Licencia
@@ -91,5 +94,5 @@ Los archivos ya están en formato Markdown compatible con Obsidian, por lo que:
 </p>
 
 <p align="center">
-	<a href="/LICENSE"><img src="https://img.shields.io/static/v1.svg?style=for-the-badge&label=License&message=MIT&logoColor=d9e0ee&colorA=363a4f&colorB=b7bdf8"/></a>
+	<a href="LICENSE"><img src="https://img.shields.io/static/v1.svg?style=for-the-badge&label=License&message=MIT&logoColor=d9e0ee&colorA=363a4f&colorB=b7bdf8"/></a>
 </p>
