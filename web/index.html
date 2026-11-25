@@ -77,6 +77,53 @@
 </main>
 
 <script>
+// Español por defecto; ?lang=en muestra la página en inglés.
+const EN = {
+ "Convierte tu exportación de ChatGPT en archivos Markdown ordenados por año y mes, listos para meterlos en": "Turn your ChatGPT export into Markdown files sorted by year and month, ready for",
+ "Suelta aquí el": "Drop here the",
+ "que te envía OpenAI, o el": "that OpenAI sends you, or",
+ "o haz clic para elegirlo": "or click to choose it",
+ "Elegir el archivo de exportación": "Choose the export file",
+ "Todo ocurre en tu navegador: el archivo no se sube a ningún servidor. Puedes desconectarte de internet después de cargar la página y funciona igual.": "Everything happens in your browser: the file is not uploaded to any server. You can go offline after loading the page and it still works.",
+ "conversaciones": "conversations",
+ "mensajes": "messages",
+ "carpetas por mes": "monthly folders",
+ "periodo": "period",
+ "⬇ Descargar ZIP con los Markdown": "⬇ Download ZIP with the Markdown files",
+ "Cómo conseguir tu exportación": "How to get your export",
+ "En ChatGPT, ve a": "In ChatGPT, go to",
+ "Configuración → Controles de datos → Exportar datos": "Settings → Data controls → Export data",
+ "OpenAI te enviará un correo con un enlace. Descarga el": "OpenAI will send you an email with a link. Download the",
+ "Suéltalo aquí tal cual: no hace falta descomprimirlo.": "Drop it here as it is: no need to unpack it.",
+ "Misma lógica que el script de Python": "Same logic as the Python script",
+ ": carpetas": ": folders named",
+ ", un archivo por conversación con la fecha al principio del nombre y un": " (month names in Spanish), one file per conversation with the date at the start of its name and a",
+ "con el resumen.": "file with the summary.",
+ "Código en GitHub": "Code on GitHub",
+ "El archivo no parece un ZIP válido.": "The file does not look like a valid ZIP.",
+ "Método de compresión no soportado en el ZIP.": "Unsupported compression method in the ZIP.",
+ "No encuentro conversations.json dentro del ZIP.": "conversations.json was not found inside the ZIP.",
+ "El archivo no es un JSON válido.": "The file is not valid JSON.",
+ "No parece un conversations.json de ChatGPT.": "This does not look like a ChatGPT conversations.json.",
+ "Leyendo ": "Reading ",
+ "Convirtiendo ": "Converting ",
+ "Listo:": "Done:",
+ "conversaciones convertidas": "conversations converted",
+ " (abajo se ven las 200 más recientes)": " (the 200 most recent are shown below)"
+};
+const LANG = new URLSearchParams(location.search).get('lang') === 'en' ? 'en' : 'es', tr = s => LANG === 'en' ? EN[s] ?? s : s;
+if (LANG === 'en') {
+  document.documentElement.lang = 'en'; document.title = tr(document.title);
+  const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (let n; n = w.nextNode();) { const k = n.data.replace(/\s+/g, ' ').trim(); if (EN[k]) n.data = n.data.replace(/^(\s*)[\s\S]*?(\s*)$/, (_, a, b) => a + EN[k] + b); }
+  for (const el of document.querySelectorAll('[aria-label],[title],[alt],[placeholder]')) for (const a of ['aria-label', 'title', 'alt', 'placeholder']) if (EN[el.getAttribute(a)]) el.setAttribute(a, EN[el.getAttribute(a)]);
+}
+{ const b = document.createElement('p'); b.style.cssText = 'position:absolute;top:12px;right:16px;margin:0;font-size:14px';
+  b.innerHTML = LANG === 'en' ? '<a href="?lang=es" lang="es">Español</a> · <b>English</b>' : '<b>Español</b> · <a href="?lang=en" lang="en">English</a>';
+  b.querySelector('a').style.color = 'inherit'; (document.querySelector('[data-lang]') ?? document.body).append(b);
+  b.querySelector('a').addEventListener('click', e => { e.currentTarget.href = e.currentTarget.getAttribute('href').split('#')[0] + location.hash; }); }
+</script>
+<script>
 const $ = (id) => document.getElementById(id);
 const MONTHS = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 let zipBlob = null;
@@ -190,29 +237,29 @@ function status(msg, err) { $('status').textContent = msg; $('status').className
 async function handle(file) {
   $('result').classList.add('hidden'); zipBlob = null;
   try {
-    status('Leyendo ' + file.name + '…');
+    status(tr('Leyendo ') + file.name + '…');
     const buf = await file.arrayBuffer();
     const isZip = new DataView(buf).getUint32(0, true) === 0x04034b50;
     const text = isZip ? await readFromZip(buf) : new TextDecoder().decode(buf);
     let data;
     try { data = JSON.parse(text); } catch { throw new Error('El archivo no es un JSON válido.'); }
     if (!Array.isArray(data)) throw new Error('No parece un conversations.json de ChatGPT.');
-    status('Convirtiendo ' + data.length + ' conversaciones…');
+    status(tr('Convirtiendo ') + data.length + ' ' + tr('conversaciones') + '…');
     const r = build(data);
     zipBlob = makeZip(r.files);
     const conv = r.files.length - 1;
-    $('sConv').textContent = conv.toLocaleString('es');
-    $('sMsg').textContent = r.msgCount.toLocaleString('es');
+    $('sConv').textContent = conv.toLocaleString(LANG);
+    $('sMsg').textContent = r.msgCount.toLocaleString(LANG);
     $('sMonths').textContent = r.months;
     $('sRange').textContent = conv ? `${new Date(r.min).getFullYear()}–${new Date(r.max).getFullYear()}` : '–';
     const list = $('list'); list.replaceChildren();
     r.files.filter((f) => f.date).sort((a, b) => b.date - a.date).slice(0, 200).forEach((f) => {
       const li = document.createElement('li'); const t = document.createElement('div'); t.textContent = f.title;
-      const s = document.createElement('span'); s.textContent = f.date.toLocaleDateString('es'); li.append(t, s); list.append(li);
+      const s = document.createElement('span'); s.textContent = f.date.toLocaleDateString(LANG); li.append(t, s); list.append(li);
     });
     $('result').classList.remove('hidden');
-    status(`Listo: ${conv} conversaciones convertidas${conv > 200 ? ' (abajo se ven las 200 más recientes)' : ''}.`);
-  } catch (e) { status(e.message, true); }
+    status(`${tr('Listo:')} ${conv} ${tr('conversaciones convertidas')}${conv > 200 ? tr(' (abajo se ven las 200 más recientes)') : ''}.`);
+  } catch (e) { status(tr(e.message), true); }
 }
 
 const drop = $('drop'), input = $('file');
